@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+
+import math
+import sys
+import os
+
+def main():
+    if '-x' in sys.argv:
+        base = 16
+    elif '-b' in sys.argv:
+        base = 2
+    else:
+        print('requires -x for hexidecimal or -b for binary', file=sys.stderr)
+        exit(1)
+
+    out = ''
+    for b in sys.stdin.buffer.read():
+        out += string_representation(b, base)
+
+    sys.stdout.write(out)
+
+def string_representation(byte, base):
+    if base == 2:
+        # Remove the '0b' prefix.
+        return bin(byte)[2:].zfill(8)
+    elif base == 16:
+        dig = '0123456789ABCDEF'
+        return dig[byte // 16] + dig[byte % 16]
+
+main()

@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+
+import math
+import sys
+import os
+
+def main():
+    if '-x' in sys.argv:
+        base = 16
+    elif '-b' in sys.argv:
+        base = 2
+    else:
+        print('requires -x for hexidecimal or -b for binary', file=sys.stderr)
+        exit(1)
+
+    byte_vals = bytearray()
+    digits_per_byte = int(math.log(256, base))
+    while True:
+        part = sys.stdin.read(digits_per_byte)
+        if not part:
+            break
+        if '\n' in part:
+            break
+        try:
+            byte_vals.append(int(part, base))
+        except ValueError:
+            print('invalid:', part, file=sys.stderr)
+            exit(0)
+
+    os.write(sys.stdout.fileno(), byte_vals)
+
+main()
