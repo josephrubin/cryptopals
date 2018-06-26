@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+
+import string
+import sys
+import os
+
+def main():
+    if len(sys.argv) < 2:
+        print('first arg must be the xor key, or -c to crack', file=sys.stdout)
+        exit(1)
+
+    if '-c' in sys.argv:
+        out = crack(sys.stdin.buffer.read())
+        sys.stdout.buffer.write(out)
+    else:
+        key = sys.argv[1][0]
+        out = do_xor(sys.stdin.buffer.read(), key)
+        sys.stdout.buffer.write(out)
+
+def crack(inp):
+    alph = string.ascii_uppercase
+    best_score = 0
+    best_plain = ''
+    for c in alph:
+        plain = do_xor(inp, c)
+        score = calculate_score(plain)
+        if score > best_score:
+            best_score = score
+            best_plain = plain
+
+    return best_plain
+
+def calculate_score(inp):
+    score = 0
+    alph = (string.ascii_letters + ' ').encode('ascii')
+    common = 'ETAOIN SHRDLU'
+    for c in inp:
+        if c in alph:
+            c = chr(c).upper()
+            score += 1
+            if c in common:
+                score += 1
+    return score
+
+def do_xor(inp, key):
+    key = key.encode('ascii')[0]
+    # Byte by byte XOR.
+    out = bytearray()
+    for byte in inp:
+        out.append(byte ^ key)
+        
+    return out
+
+main()
