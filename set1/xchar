@@ -13,37 +13,67 @@ def main():
         out = crack(sys.stdin.buffer.read())
         sys.stdout.buffer.write(out)
     else:
-        key = sys.argv[1][0]
+        key = ord(sys.argv[1][0])
         out = do_xor(sys.stdin.buffer.read(), key)
         sys.stdout.buffer.write(out)
 
 def crack(inp):
-    alph = string.ascii_uppercase
-    best_score = 0
+    best_score = None
     best_plain = ''
-    for c in alph:
+    for c in range(256):
         plain = do_xor(inp, c)
         score = calculate_score(plain)
-        if score > best_score:
+        if best_score == None or score > best_score:
             best_score = score
             best_plain = plain
 
     return best_plain
 
+DIST = {'a':8,
+        'b':1,
+        'c':3,
+        'd':4,
+        'e':13,
+        'f':2,
+        'g':2,
+        'h':6,
+        'i':7,
+        'j':0,
+        'k':1,
+        'l':4,
+        'm':2,
+        'n':7,
+        'o':8,
+        'p':2,
+        'q':0,
+        'r':6,
+        's':6,
+        't':9,
+        'u':3,
+        'v':1,
+        'w':2,
+        'x':0,
+        'y':2,
+        'z':0,
+        ' ':20}
 def calculate_score(inp):
+    dist = {}
     score = 0
     alph = (string.ascii_letters + ' ').encode('ascii')
-    common = 'ETAOIN SHRDLU'
     for c in inp:
         if c in alph:
-            c = chr(c).upper()
-            score += 1
-            if c in common:
-                score += 1
+            c = chr(c).lower()
+            if c in dist:
+                dist[c] += 1
+            else:
+                dist[c] = 1
+        else:
+            score -= 12
+    for key in dist:
+        score += dist[key] * DIST[key]
     return score
 
 def do_xor(inp, key):
-    key = key.encode('ascii')[0]
     # Byte by byte XOR.
     out = bytearray()
     for byte in inp:
