@@ -1,0 +1,20 @@
+#!/usr/bin/env python3
+
+import sys
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("arg one must be key")
+        exit(1)
+    out = encode(sys.stdin.buffer.read(), sys.argv[1])
+    sys.stdout.buffer.write(out)
+
+
+def encode(inp, key):
+    out = bytearray()
+    for i, byte in enumerate(inp):
+        out.append(byte ^ ord(key[i % len(key)]))
+    return out
+
+main()
