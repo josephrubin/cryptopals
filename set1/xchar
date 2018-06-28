@@ -81,4 +81,6 @@ def do_xor(inp, key):
         
     return out
 
-main()
+if __name__ == "__main__":
+    main()
+
