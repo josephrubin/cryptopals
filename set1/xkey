@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+
+from hamming import compute
+import sys
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("arg one must be key, or -c to crack")
+        exit(1)
+    if '-c' in sys.argv:
+        out = crack(sys.stdin.buffer.read())
+        sys.stdout.buffer.write(out)
+    else:
+        out = encode(sys.stdin.buffer.read(), sys.argv[1])
+        sys.stdout.buffer.write(out)
+
+
+def crack(inp):
+    # Find the keysize.
+    key_size_hamming = {}
+    for ks in range(2, min(41, len(inp) // 2 + 1)):
+        a = inp[:ks]
+        b = inp[ks:2*ks]
+        key_size_hamming[ks] = compute(a, b) / ks
+    print(sorted([str(key_size_hamming[k])  + "<" + str(k) for k in key_size_hamming]))
+    return b'\x60'
+
+
+def encode(inp, key):
+    out = bytearray()
+    for i, byte in enumerate(inp):
+        out.append(byte ^ ord(key[i % len(key)]))
+    return out
+
+main()
