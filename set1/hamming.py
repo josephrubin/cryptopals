@@ -7,18 +7,24 @@ import sys
 def compute(a, b):
     if len(a) < len(b):
         a += (b'\0' * (len(b) - len(a)))
+        print("Fill first string with 0s")
     elif len(b) < len(a):
         b += (b'\0' * (len(a) - len(b)))
+        print("Fill second string with 0s")
 
     dist = 0
     for c_a, c_b in zip(iter(a), iter(b)):
-        s_a = bin((c_a))[2:].zfill(8)
-        s_b = bin((c_b))[2:].zfill(8)
-        for bit_a, bit_b in zip(iter(s_a), iter(s_b)):
-            if bit_a != bit_b:
-                dist += 1
+        dist += count(c_a ^ c_b)
 
     return dist
+
+
+def count(binary):
+    s = 0
+    for c in bin(binary):
+        if c == '1':
+            s += 1
+    return s
 
 
 if __name__ == "__main__":

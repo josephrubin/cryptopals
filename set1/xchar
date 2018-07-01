@@ -10,7 +10,7 @@ def main():
         exit(1)
 
     if '-c' in sys.argv:
-        out = crack(sys.stdin.buffer.read())
+        out = crack(sys.stdin.buffer.read()[1])
         sys.stdout.buffer.write(out)
     else:
         key = ord(sys.argv[1][0])
@@ -20,14 +20,16 @@ def main():
 def crack(inp):
     best_score = None
     best_plain = ''
+    best_key = 'a'
     for c in range(256):
         plain = do_xor(inp, c)
         score = calculate_score(plain)
         if best_score == None or score > best_score:
             best_score = score
             best_plain = plain
+            best_key = chr(c)
 
-    return best_plain
+    return best_key, best_plain
 
 DIST = {'a':8,
         'b':1,
