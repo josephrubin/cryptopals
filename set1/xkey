@@ -12,7 +12,7 @@ def main():
         exit(1)
     if '-c' in sys.argv:
         out = crack(sys.stdin.buffer.read())[1]
-        sys.stdout.buffer.write(out)
+        #sys.stdout.buffer.write(out)
     else:
         out = encode(sys.stdin.buffer.read(), sys.argv[1])
         sys.stdout.buffer.write(out)
@@ -26,14 +26,12 @@ def crack(inp):
         b = inp[ks:2*ks]
         c = inp[2*ks:3*ks]
         d = inp[3*ks:4*ks]
-        e = inp[4*ks:5*ks]
-        f = inp[5*ks:6*ks]
 
         ab = compute(a, b)
+        bc = compute(b, c)
         cd = compute(c, d)
-        ef = compute(e, f)
 
-        distances.append((ks, (ab + cd + ef) / (3 * ks)))
+        distances.append((ks, (ab + bc + cd) / (3 * ks)))
     distances.sort(key=lambda t: t[1])
 
     sizes = [k[0] for k in distances]
