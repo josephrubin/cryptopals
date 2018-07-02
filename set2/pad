@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+import sys
+
+
+inp = sys.stdin.buffer.read()
+desired_length = int(sys.argv[1])
+
+# If the input is already an even multiple, we add a full block of padding. This is intended.
+missing_count = desired_length - (len(inp) % desired_length)
+
+if missing_count > 255:
+    sys.stderr.write("Cannot pad more than 255, because there is no byte larger!\n")
+    exit(1)
+
+sys.stdout.buffer.write(inp + bytes([missing_count]) * missing_count)
+
