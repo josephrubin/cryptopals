@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+# This version in set2 will support CBC mode.
+from Crypto.Cipher import AES
+import sys
+
+
+def main():
+    if '-ecb' in sys.argv:
+        mode = 0
+        sys.argv.remove('-ecb')
+    elif '-cbc' in sys.argv:
+        mode = 1
+        sys.argv.remove('-cbc')
+    else:
+        sys.stderr.write('please choose either -ecb or -cbc mode')
+        exit(1)
+      
+    if '-d' in sys.argv:
+        e = False
+        sys.argv.remove('-d')
+    else:
+        e = True
+
+    key = sys.argv[1]
+    iv = b'\x00' *16
+    txt = sys.stdin.buffer.read()
+
+    if mode == 0:
+        sys.stdout.buffer.write(do_ecb(e, txt, key))
+        exit(0)
+
+    if mode == 1:
+        # Now do CBC mode.
+        if e:
+            for i in range(0, len(txt), 16):
+                block = txt[i:i+16]
+                iv = do_ecb(True, xor(iv, block), key)
+                sys.stdout.buffer.write(iv)
+        else:
+            for i in range(0, len(txt), 16):
+                block = txt[i:i+16]
+                sys.stdout.buffer.write(xor(do_ecb(False, block, key), iv))
+                iv = block
+        exit(0)
+
+
+def do_ecb(e, txt, key):
+    enc = AES.new(key, AES.MODE_ECB)
+    if e:
+        return enc.encrypt(txt)
+    else:
+        return enc.decrypt(txt)
+
+
+def xor(a, b):
+    ret = bytearray()
+    for _a, _b in zip(a, b):
+        ret.append(_a ^ _b)
+    return bytes(ret)
+
+
+if __name__ == '__main__':
+    main()
+
