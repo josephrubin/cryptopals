@@ -12,7 +12,7 @@ def main():
         mode = 1
         sys.argv.remove('-cbc')
     else:
-        sys.stderr.write('please choose either -ecb or -cbc mode')
+        sys.stderr.write('please choose either -ecb or -cbc mode\n')
         exit(1)
       
     if '-d' in sys.argv:
