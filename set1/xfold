@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-
 import sys
-import os
 
-def main():
+
+def _main():
+    """The main function treats stdin as two strings cut in the middle.
+    
+    Obviously the input must be even for this to work.
+    """
     inp = sys.stdin.buffer.read()
 
     if len(inp) % 2 != 0:
@@ -13,10 +16,13 @@ def main():
     half_one = inp[:int(len(inp) / 2)]
     half_two = inp[int(len(inp) / 2):]
 
-    out = bytearray()
-    for byte_one, byte_two in zip(half_one, half_two):
-        out.append(byte_one ^ byte_two)
+    sys.stdout.buffer.write(do(half_one, half_two))
 
-    os.write(sys.stdout.fileno(), out)
 
-main()
+def do(a, b):
+    return bytes([_a ^ _b for _a, _b in zip(a, b)])
+
+
+if __name__ == '__main__':
+    _main()
+
