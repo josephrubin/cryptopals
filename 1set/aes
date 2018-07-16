@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+import sys
+
+
+from Crypto.Cipher import AES
+import sys
+
+
+if '-d' in sys.argv:
+    decrypt = True
+    sys.argv.remove('-d')
+else:
+    decrypt = False
+
+enc = AES.new(sys.argv[1], AES.MODE_ECB)
+sys.stdout.buffer.write(enc.decrypt(sys.stdin.buffer.read()) if decrypt else enc.encrypt(sys.stdin.buffer.read()))
