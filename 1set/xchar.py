@@ -1,16 +1,7 @@
 #!/usr/bin/env python3
 
-import string
 import sys
-import os
-
-# Letter: Relative Frequency (precent).
-FREQ = {'a':8.167, 'b':1.492, 'c':2.782, 'd':4.253, 'e':12.702,
-        'f':2.228, 'g':2.015, 'h':6.094, 'i':6.966, 'j':0.153,
-        'k':0.772, 'l':4.025, 'm':2.406, 'n':6.749, 'o':7.507,
-        'p':1.929, 'q':0.095, 'r':5.987, 's':6.327, 't':9.056,
-        'u':2.758, 'v':0.978, 'w':2.360, 'x':0.150, 'y':1.975,
-        'z':0.074, ' ':15}
+import score as sc
 
 
 def _main():
@@ -47,29 +38,12 @@ def crack(cipher):
     best_key = 'a'
     for c in range(256):
         plain = do_xor(cipher, c)
-        score = score_english(plain)
-        if best_score == None or score > best_score:
+        score = sc.score_english(plain)
+        if best_score == None or score >= best_score:
             best_score = score
             best_key = c
 
     return best_key
-
-
-def score_english(txt):
-    txt_chars = dict()
-
-    # Populate a dictionary of chars from the txt.
-    for c in txt:
-        c = chr(c).lower()
-        if c in FREQ:
-            txt_chars[c] = txt_chars.get(c, 0) + 1
-
-    # Now calculate the score.
-    score = 0
-    for c in txt_chars:
-        score += FREQ[c] * txt_chars[c]
-
-    return score
 
 
 if __name__ == '__main__':
