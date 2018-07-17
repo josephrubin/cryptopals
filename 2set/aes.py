@@ -51,19 +51,24 @@ def decrypt_ecb(txt, key):
 
 
 def encrypt_cbc(txt, key, iv=(b'\x00'*16)):
+    if len(iv) != 16:
+        sys.stderr.write('iv must have a length of 16\n')
+        exit(1)
     cipher = bytearray()
     for i in range(0, len(txt), 16):
         block = txt[i:i+16]
-        iv = do_ecb(True, xor(iv, block), key)
+        iv = encrypt_ecb(xor(iv, block), key)
         cipher.extend(iv)
+    return cipher
 
 
 def decrypt_cbc(txt, key, iv=(b'\x00*16')):
     plain = bytearray()
     for i in range(0, len(txt), 16):
         block = txt[i:i+16]
-        plain.extend(xor(do_ecb(False, block, key), iv))
+        plain.extend(xor(decrypt_ecb(block, key), iv))
         iv = block
+    return plain
 
 
 if __name__ == '__main__':
