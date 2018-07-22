@@ -4,6 +4,10 @@ import box
 
 
 def _main():
+    sys.stdout.write(mode(box.produce))
+
+
+def mode(func=box.produce):
     # We know it prepends 5 to 11 bytes.
     # So first we should ensure the first block of 16 is filled,
     # then we add two whole blocks, and then the last block is
@@ -12,7 +16,7 @@ def _main():
     payload = b'a' * 43
 
     # Now put our payload into the box.
-    result = box.produce(payload)
+    result = func(payload)
 
     # Our goal is to detect whther ecb mode or cbc mode was used.
     # This is acutally pretty easy!
@@ -22,11 +26,11 @@ def _main():
     # Since we put in the same plaintext for those blocks, we just need
     # to check if the ciphertexts for those blocks match.
     if result[16:32] == result[32:48]:
-        mode = 'ecb'
+        m = 'ecb'
     else:
-        mode = 'cbc'
+        m = 'cbc'
 
-    sys.stdout.write(mode)
+    return m
 
 
 
